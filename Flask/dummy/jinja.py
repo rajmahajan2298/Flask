@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request
+from flask import Flask, render_template,request,redirect,url_for
 
 ## WSGI APP
 app = Flask(__name__)
@@ -40,7 +40,45 @@ def success(score):
     
     return render_template('result.html', results=res)
 
+## Jinja2 For 
 
+@app.route("/successres/<int:score>")
+def successres(score):
+    res = " "
+    if score >= 50:
+        res = "PASSED"
+    else: 
+        res = "FAILED"
+    
+    exp = {'score': score, "res": res}
+    
+    return render_template('results1.html', results=exp)
 
+## Jinja IF
+
+@app.route("/successif/<int:score>")
+def successif(score):
+    
+    return render_template('result.html', results=score)
+
+## Fail 
+
+@app.route("/fail/<int:score>")
+def fail(score):
+    
+    return render_template('result.html', results=score)
+
+@app.route("/submitone", methods=['POST', 'GET'])
+def submitone():
+    total_score = 0
+    if request.method == 'POST':
+        science = float(request.form['science'])
+        maths = float(request.form['maths'])
+        c = float(request.form['c'])
+        data_science = float(request.form['datascience'])
+        
+        total_score = (science+maths+c+data_science)/4
+    return redirect(url_for('successres', score=total_score))
+    
 if __name__ == "__main__":
     app.run(debug=True)
